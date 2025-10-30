@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Review Sentiment Analysis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+            resize: none;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🎬 Movie Review Sentiment</h2>
+        <form id="reviewForm">
+            <textarea id="review" placeholder="Type your movie review here..."></textarea>
+            <br>
+            <button type="submit">Predict Sentiment</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById("reviewForm");
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const review = document.getElementById("review").value;
+            const resultDiv = document.getElementById("result");
+
+            resultDiv.innerHTML = "⏳ Analyzing...";
+
+            const response = await fetch("http://127.0.0.1:5000/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ review: review })
+            });
+
+            const data = await response.json();
+            if (data.sentiment) {
+                resultDiv.innerHTML = `Prediction: <span style="color:${data.sentiment === 'Positive' ? 'green' : 'red'}">${data.sentiment}</span>`;
+            } else {
+                resultDiv.innerHTML = "⚠️ Error: Could not predict sentiment.";
+            }
+        });
+    </script>
+</body>
+</html>
